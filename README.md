@@ -5,7 +5,6 @@
 # 📡 Realtime Comm Lab: 엔터프라이즈 실시간 분산 아키텍처
 
 <div align="center">
-  <img src="./project-logo.png" width="200" />
   <p><i>"Zero-Latency, Absolute Reliability in Scale-out Environments"</i></p>
 
   [![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.6-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
@@ -68,7 +67,7 @@ sequenceDiagram
     SigServer->>PeerB: [BROADCAST] /topic/rtc/room/1 (ICE Candidate)
     
     Note over PeerA, PeerB: WebRTC P2P 연결 수립! (서버 개입 없음)
-    PeerA<-->>PeerB: 직접 미디어(Video/Audio) 스트리밍 시작
+    PeerA->>PeerB: 직접 미디어(Video/Audio) 양방향 스트리밍 시작
 ```
 
 ---
