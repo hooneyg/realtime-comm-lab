@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.6'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.hooney.lab'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '21'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // 1. Web & WebSocket (실시간 통신 기반)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // 2. Redis (Pub/Sub 스케일 아웃)
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // 3. Security (JWT 웹소켓 인터셉터용)
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+    // 4. Utility (Lombok & Validation)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // 5. Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    // Embedded Redis for Integration Tests
+    testImplementation 'com.github.codemonstur:embedded-redis:1.4.3'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
