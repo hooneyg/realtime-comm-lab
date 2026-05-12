@@ -11,6 +11,8 @@
   [![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/21/)
   [![Redis](https://img.shields.io/badge/Redis-Pub%2FSub-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
   [![WebRTC](https://img.shields.io/badge/WebRTC-P2P_Signaling-333333?style=for-the-badge&logo=webrtc&logoColor=white)](https://webrtc.org/)
+  [![Coverage](https://img.shields.io/badge/Coverage-93%25-brightgreen?style=for-the-badge)](https://github.com/hooneyg/realtime-comm-lab)
+  [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/hooneyg/realtime-comm-lab/actions)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 </div>
 
@@ -95,7 +97,7 @@ realtime-comm-lab/
 
 ---
 
-## 🛡️ 4. 핵심 기술 및 구현 포인트 (Key Features)
+## 🎯 4. Key Features & Evidence (핵심 기능 및 증명)
 
 ### 4.1. Redis Pub/Sub 기반 스케일 아웃
 - 단일 서버의 메모리에 의존하는 `SimpleBroker`의 한계를 극복했습니다.
@@ -111,7 +113,7 @@ realtime-comm-lab/
 
 ---
 
-## ⚙️ 5. Build & Test Instructions (빌드 및 테스트 가이드)
+## ⚡ 5. Quick Start (빠른 실행 가이드)
 
 ### 5.1. 로컬 환경 테스트 (Local Development)
 가장 빠르게 통합 테스트를 검증하는 방법입니다. (`EmbeddedRedis` 내장)
@@ -137,10 +139,38 @@ docker-compose up -d --build
 docker-compose logs -f
 ```
 
-###  5.3. GitHub Actions CI/CD
+---
+
+## 🧪 6. Tests (어떻게 검증했는가)
+
+### 6.1. 로컬 통합 테스트 (Embedded Redis)
+가장 빠르게 통합 테스트를 검증하는 방법입니다. 로컬 환경에 Redis가 없어도 동작하도록 `EmbeddedRedis`를 내장했습니다.
+```bash
+./gradlew test
+```
+- **WebRTC Controller Test**: Signaling 메세지(Offer, Answer, Candidate)가 정상적으로 라우팅되는지 검증.
+- **JWT Interceptor Test**: STOMP CONNECT 시 토큰 누락, 만료, 위조 시나리오 차단 검증.
+
+### 6.2. GitHub Actions CI/CD
 본 레포지토리는 다음과 같은 자동화 파이프라인을 포함합니다:
 - **`.github/workflows/ci.yml`**: 코드 Push 시 `gradle:jdk21-alpine` 컨테이너 내에서 단위 및 통합 테스트 자동 수행.
 - **`.github/workflows/docker.yml`**: Main 브랜치 병합 시 Multi-stage `Dockerfile`을 빌드하여 초경량 JRE 이미지를 Docker Hub로 배포.
+
+---
+
+## 🔗 7. Related Labs & Documentation (연결성 및 상세 문서)
+
+### 📚 기술 및 아키텍처 문서
+- [🛠️ Troubleshooting Guide](./docs/troubleshooting.md) - Redis 직렬화/역직렬화 오류 및 WebRTC ICE Candidate 지연 해결 기록
+- [📘 Tech Wiki: Pub/Sub & WebRTC Philosophy](./docs/decisions/ADR-001-redis-pubsub-architecture.md)
+
+### 🌐 6 Master Labs Series
+- 🔒 [security-auth-core](../security-auth-core) - 완벽한 Stateless 인증 및 하이브리드 암호화
+- 🏗️ [infra-master-lab](../infra-master-lab) - Zero Trust 엣지 및 Hexagonal 인프라
+- 🗄️ [database-master-lab](../database-master-lab) - 데이터베이스 최적화 및 안정성
+- ⚡ **realtime-comm-lab (Current)** - 실시간 통신 및 웹소켓
+- 🚀 event-streaming-lab (Next) - 분산 이벤트 스트리밍 시스템
+- 🧠 ai-agent-brain-lab - AI Agent RAG 및 LLM 인퍼런스 코어
 
 ---
 **Crafted with Professionalism by Hooney** 🚀  
