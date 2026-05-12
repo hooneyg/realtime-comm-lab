@@ -18,13 +18,17 @@
 
 ---
 
-## 🏗️ 1. Project Essence (프로젝트 핵심 가치)
-**Realtime Comm Lab**은 단순한 단일 서버 웹소켓 장난감을 넘어, 서버가 수십 대로 늘어나는(Scale-out) 환경에서도 **메시지 유실 없이 통신을 보장**하는 엔터프라이즈 레퍼런스입니다. 
-본 프로젝트는 **1) Redis Pub/Sub 기반 분산 채팅**과 **2) WebRTC P2P 화상 통신 시그널링** 두 가지 핵심 도메인을 완벽하게 분리하여 설계했습니다.
+## 📌 Problem — 왜 만들었는가
+
+- **상태 동기화 한계**: 단일 서버 기반의 웹소켓은 서버가 확장(Scale-out)될 때 인스턴스 간 세션과 메시지 동기화 문제가 발생합니다.
+- **연결 보호의 복잡성**: WebSocket 연결은 일반 HTTP API와 프로토콜이 다르므로 전용 인증 및 핸드쉐이크 보호 전략이 필요합니다.
+- **P2P 연결 분리**: WebRTC 미디어 스트리밍 시, 초기 연결 협상(Signaling) 서버와 실제 미디어 트래픽(Peer Connection) 흐름을 완벽히 분리해야 서버 부하를 최소화할 수 있습니다.
+
+**Realtime Comm Lab**은 단순한 장난감을 넘어, 위 문제들을 해결하기 위해 **1) Redis Pub/Sub 기반 분산 채팅**과 **2) WebRTC P2P 화상 통신 시그널링** 두 가지 핵심 도메인을 완벽하게 설계한 엔터프라이즈 레퍼런스입니다.
 
 ---
 
-## 🌐 2. Architecture Blueprints (아키텍처 조감도)
+## 🏗️ Architecture — 어떻게 설계했는가
 
 ### 2.1. STOMP & Redis Pub/Sub Architecture (Chat Domain)
 여러 대의 STOMP 서버 인스턴스가 중앙의 Redis를 통해 실시간 트래픽을 완벽하게 브로드캐스팅하는 흐름입니다.
@@ -74,7 +78,7 @@ sequenceDiagram
 
 ---
 
-## 📂 3. Project Structure
+## 📂 Project Structure
 
 ```text
 realtime-comm-lab/
@@ -97,7 +101,7 @@ realtime-comm-lab/
 
 ---
 
-## 🎯 4. Key Features & Evidence (핵심 기능 및 증명)
+## 🎯 Key Features & Evidence (핵심 기능 및 증명)
 
 ### 4.1. Redis Pub/Sub 기반 스케일 아웃
 - 단일 서버의 메모리에 의존하는 `SimpleBroker`의 한계를 극복했습니다.
@@ -113,7 +117,7 @@ realtime-comm-lab/
 
 ---
 
-## ⚡ 5. Quick Start (빠른 실행 가이드)
+## ⚡ Quick Start (빠른 실행 가이드)
 
 ### 5.1. 로컬 환경 테스트 (Local Development)
 가장 빠르게 통합 테스트를 검증하는 방법입니다. (`EmbeddedRedis` 내장)
@@ -141,7 +145,7 @@ docker-compose logs -f
 
 ---
 
-## 🧪 6. Tests (어떻게 검증했는가)
+## 🧪 Tests (어떻게 검증했는가)
 
 ### 6.1. 로컬 통합 테스트 (Embedded Redis)
 가장 빠르게 통합 테스트를 검증하는 방법입니다. 로컬 환경에 Redis가 없어도 동작하도록 `EmbeddedRedis`를 내장했습니다.
@@ -158,23 +162,46 @@ docker-compose logs -f
 
 ---
 
-## 🔗 7. Related Labs & Documentation (연결성 및 상세 문서)
+## 🧭 Roadmap
 
-### 📚 기술 및 아키텍처 문서
+- [ ] WebSocket session registry 고도화
+- [ ] Redis Streams 적용 검토
+- [ ] WebRTC room/session lifecycle 관리
+- [ ] Connection metrics 수집
+- [ ] Load test 시나리오 추가
+
+---
+
+## 🔗 Related Labs
+
+| Related Lab | 연결 이유 |
+| --- | --- |
+| `infra-master-lab` | 이 LAB을 운영 환경에 배포하기 위한 인프라 기준 |
+| `security-auth-core` | API 또는 연결 요청의 인증/인가 기준 |
+| `database-master-lab` | 상태 저장, 조회, 성능 최적화 기준 |
+| `event-streaming-lab` | 비동기 이벤트 처리와 실패 복구 기준 |
+| `ai-agent-brain-lab` | LAB 문서 기반 AI 질의/자동화 확장 기준 |
+
+---
+
+## 📚 Documentation
+
+- [🌐 WebSocket Scaling Strategy](./docs/websocket-scaling.md)
+- [📦 Redis Pub/Sub Clustering](./docs/redis-pubsub-clustering.md)
+- [🎥 WebRTC Signaling Flow](./docs/webrtc-signaling-flow.md)
+- [🔐 JWT Handshake Auth](./docs/jwt-handshake-auth.md)
 - [🛠️ Troubleshooting Guide](./docs/troubleshooting.md) - Redis 직렬화/역직렬화 오류 및 WebRTC ICE Candidate 지연 해결 기록
 - [📘 Tech Wiki: Pub/Sub & WebRTC Philosophy](./docs/decisions/ADR-001-redis-pubsub-architecture.md)
 
-### 🌐 6 Master Labs Series
-- 🔒 [security-auth-core](../security-auth-core) - 완벽한 Stateless 인증 및 하이브리드 암호화
-- 🏗️ [infra-master-lab](../infra-master-lab) - Zero Trust 엣지 및 Hexagonal 인프라
-- 🗄️ [database-master-lab](../database-master-lab) - 데이터베이스 최적화 및 안정성
-- ⚡ **realtime-comm-lab (Current)** - 실시간 통신 및 웹소켓
-- 🚀 event-streaming-lab (Next) - 분산 이벤트 스트리밍 시스템
-- 🧠 ai-agent-brain-lab - AI Agent RAG 및 LLM 인퍼런스 코어
+---
+
+## 📄 License
+This project is licensed under the [MIT License](./LICENSE).
 
 ---
-**Crafted with Professionalism by Hooney** 🚀  
-*Copyright © 2026 Hooney. All rights reserved.*
+
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=FF8C00&height=100&section=footer" />
+<b>Built with ❤️ by <a href="https://github.com/hooneyg">Hooney</a> — AI FullStack Developer & Enterprise Solution Architect</b>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=FF8C00&height=100&section=footer" />
 </div>
