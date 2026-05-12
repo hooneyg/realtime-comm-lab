@@ -72,25 +72,48 @@ sequenceDiagram
 
 ---
 
-## 🛡️ 3. 핵심 기술 및 구현 포인트 (Key Features)
+## 📂 3. Project Structure
 
-### 3.1. Redis Pub/Sub 기반 스케일 아웃
+```text
+realtime-comm-lab/
+├── .github/workflows/        # ⚙️ GitHub Actions CI/CD (ci.yml, docker.yml)
+├── src/main/java/com/hooney/lab/realtime/
+│   ├── chat/                 # 💬 Redis Pub/Sub 기반 분산 채팅 아키텍처
+│   │   ├── controller/       # STOMP 메시지 라우터 및 필터 (Timestamp 보정)
+│   │   ├── dto/
+│   │   └── pubsub/           # 🚀 Redis Publisher & Subscriber 로직
+│   ├── config/               # ⚙️ WebSocket & Redis 설정
+│   ├── security/             # 🛡️ JWT Handshake 전용 인터셉터 (CONNECT 방어)
+│   └── webrtc/               # 🎥 P2P 화상 통신 전용 시그널링 컨트롤러
+├── src/test/java/com/hooney/lab/realtime/
+│   ├── chat/                 # 🧪 Embedded Redis 기반 100% 통합 검증 테스트
+│   └── security/             # 🧪 Mockito 기반 인터셉터 단위 테스트
+├── build.gradle              # Spring Boot 4.0.6, Java 21, 의존성 설정
+├── docker-compose.yml        # 🐳 Redis 1 + App Node 2 분산 서버 시뮬레이션
+└── Dockerfile                # 멀티 스테이지(Native Gradle) 초경량 빌드
+```
+
+---
+
+## 🛡️ 4. 핵심 기술 및 구현 포인트 (Key Features)
+
+### 4.1. Redis Pub/Sub 기반 스케일 아웃
 - 단일 서버의 메모리에 의존하는 `SimpleBroker`의 한계를 극복했습니다.
 - `ChatMessagePublisher`와 `RedisMessageSubscriber`를 구현하여, 노드 간 완벽한 메시지 동기화를 달성했습니다.
 - 클라이언트 시간 위조 방지를 위해 서버 인입 시 타임스탬프를 보정합니다.
 
-### 3.2. WebRTC P2P 시그널링 서버
+### 4.2. WebRTC P2P 시그널링 서버
 - 클라이언트 간 직접 미디어 통신을 위한 `OFFER`, `ANSWER`, `ICE Candidate` 교환을 고속으로 중계하는 `WebRTCSignalingController`를 구현했습니다.
 
-### 3.3. JWT Handshake Interceptor
+### 4.3. JWT Handshake Interceptor
 - HTTP 세션이 아닌 STOMP 프로토콜에 맞춘 특수 인증 로직입니다.
 - `JwtChannelInterceptor`를 통해 소켓 최초 연결(`CONNECT`) 시 헤더를 검사하고, 비인가 접속을 원천 차단하여 인프라 자원을 보호합니다.
 
 ---
 
-## ⚙️ 4. Build & Test Instructions (빌드 및 테스트 가이드)
+## ⚙️ 5. Build & Test Instructions (빌드 및 테스트 가이드)
 
-### 4.1. 로컬 환경 테스트 (Local Development)
+### 5.1. 로컬 환경 테스트 (Local Development)
 가장 빠르게 통합 테스트를 검증하는 방법입니다. (`EmbeddedRedis` 내장)
 ```bash
 # 1. 깃허브에서 클론
@@ -104,7 +127,7 @@ cd realtime-comm-lab
 ./gradlew bootRun
 ```
 
-### 4.2. Docker Multi-Node 시뮬레이션 (Scale-out Test)
+### 5.2. Docker Multi-Node 시뮬레이션 (Scale-out Test)
 로컬에 Java나 Gradle이 없어도 완벽한 분산 서버 환경을 띄울 수 있습니다.
 ```bash
 # Redis 브로커 1대와 Application 서버 2대를 동시에 실행 (로드밸런싱 검증용)
@@ -114,13 +137,14 @@ docker-compose up -d --build
 docker-compose logs -f
 ```
 
-### 4.3. GitHub Actions CI/CD
+###  5.3. GitHub Actions CI/CD
 본 레포지토리는 다음과 같은 자동화 파이프라인을 포함합니다:
 - **`.github/workflows/ci.yml`**: 코드 Push 시 `gradle:jdk21-alpine` 컨테이너 내에서 단위 및 통합 테스트 자동 수행.
 - **`.github/workflows/docker.yml`**: Main 브랜치 병합 시 Multi-stage `Dockerfile`을 빌드하여 초경량 JRE 이미지를 Docker Hub로 배포.
 
 ---
-
+**Crafted with Professionalism by Hooney** 🚀  
+*Copyright © 2026 Hooney. All rights reserved.*
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=FF8C00&height=100&section=footer&text=Developed%20by%20Hooney&fontSize=20&fontAlignY=50&fontColor=ffffff" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=FF8C00&height=100&section=footer" />
 </div>
