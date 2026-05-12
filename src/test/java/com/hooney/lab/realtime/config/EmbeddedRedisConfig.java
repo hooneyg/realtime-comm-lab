@@ -32,10 +32,7 @@ public class EmbeddedRedisConfig {
         try {
             // 운영체제 포트 충돌을 막기 위해 가급적 동적 포트를 사용하는 것이 좋으나,
             // 본 데모에서는 고정 포트 6379를 사용합니다.
-            redisServer = RedisServer.builder()
-                    .port(redisPort)
-                    .setting("maxmemory 128M") // 메모리 제한
-                    .build();
+            redisServer = new RedisServer(redisPort);
             redisServer.start();
         } catch (Exception e) {
             // 포트 충돌 시 이미 띄워져 있는 로컬 Redis를 사용하도록 예외 삼킴 (실무에서는 포트 동적 할당 로직 구현 필요)
