@@ -1,0 +1,47 @@
+version: '3.8'
+
+# [Architecture Note]
+# 로컬 개발 및 통합 검증을 위한 인프라 오케스트레이션 파일입니다.
+# 실시간 통신 서버 2대(Scale-out 시뮬레이션)와 Redis를 동시에 띄워,
+# 한쪽 서버로 들어온 STOMP 메시지가 Redis Pub/Sub을 거쳐
+# 다른 쪽 서버의 클라이언트에게 브로드캐스트되는 분산 아키텍처를 검증할 수 있습니다.
+
+services:
+  # 1. Redis 브로커 (Pub/Sub 심장부)
+  redis-broker:
+    image: redis:7.2-alpine
+    container_name: rtc-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass "rtc-secret"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "rtc-secret", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # 2. Realtime Comm Lab (노드 1)
+  realtime-node-1:
+    build: .
+    container_name: rtc-node-1
+    ports:
+      - "8081:8080"
+    environment:
+      - REDIS_HOST=redis-broker
+      - REDIS_PASSWORD=rtc-secret
+    depends_on:
+      redis-broker:
+        condition: service_healthy
+
+  # 3. Realtime Comm Lab (노드 2 - 스케일 아웃)
+  realtime-node-2:
+    build: .
+    container_name: rtc-node-2
+    ports:
+      - "8082:8080"
+    environment:
+      - REDIS_HOST=redis-broker
+      - REDIS_PASSWORD=rtc-secret
+    depends_on:
+      redis-broker:
+        condition: service_healthy

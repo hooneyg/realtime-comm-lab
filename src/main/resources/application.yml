@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: realtime-comm-lab
+    
+  # Redis Pub/Sub을 위한 접속 설정
+  # 로컬 환경이나 docker-compose 환경에서 동일하게 바라보도록 셋팅합니다.
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      
+  # WebSocket 환경의 로깅 포맷 최적화 (STOMP 디버깅 용이)
+  output:
+    ansi:
+      enabled: always
+
+server:
+  port: 8080
+
+# 보안 통신을 위한 JWT 시크릿 키 (MSA 통합 인증용)
+# 실제 배포 환경에서는 HashiCorp Vault나 Config Server를 통해 주입받습니다.
+jwt:
+  secret: ${JWT_SECRET:hooney-enterprise-super-secret-key-for-realtime-jwt-validation-2026!}
+
+logging:
+  level:
+    org.springframework.messaging: INFO
+    org.springframework.web.socket: INFO
+    com.hooney.lab: DEBUG
