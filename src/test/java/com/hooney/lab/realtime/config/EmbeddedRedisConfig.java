@@ -42,7 +42,11 @@ public class EmbeddedRedisConfig {
     @PreDestroy
     public void stopRedis() {
         if (redisServer != null) {
-            redisServer.stop();
+            try {
+                redisServer.stop();
+            } catch (Exception e) {
+                // Ignore stop error during shutdown
+            }
         }
     }
 

@@ -7,6 +7,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -39,8 +40,18 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
                 if (jwtTokenProvider.validateToken(token)) {
                     // 유효한 토큰일 경우 Authentication 객체를 세션에 할당
                     Authentication authentication = jwtTokenProvider.getAuthentication(token);
-                    accessor.setUser(authentication);
+                    
+                    // 수정을 위해 가변(Mutable) accessor 확보
+                    StompHeaderAccessor mutableAccessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                    if (mutableAccessor == null || !mutableAccessor.isMutable()) {
+                        mutableAccessor = StompHeaderAccessor.wrap(message);
+                    }
+                    
+                    mutableAccessor.setUser(authentication);
                     log.info("WebSocket CONNECT 성공: User={}", authentication.getName());
+                    
+                    // 변경된 헤더를 포함한 새 메시지 반환
+                    return MessageBuilder.createMessage(message.getPayload(), mutableAccessor.getMessageHeaders());
                 } else {
                     log.warn("WebSocket CONNECT 거절: 유효하지 않은 JWT 토큰");
                     throw new IllegalArgumentException("Invalid JWT token");
