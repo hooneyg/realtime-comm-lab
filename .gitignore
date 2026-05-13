@@ -4,7 +4,7 @@ build/
 bin/
 *.class
 !gradle/wrapper/gradle-wrapper.jar
-!**/src/main/resources/gradle-wrapper.properties
+!gradle/wrapper/gradle-wrapper.properties
 
 ### 💻 IDE & OS ###
 .idea/
@@ -12,6 +12,7 @@ bin/
 .vscode/
 .DS_Store
 Thumbs.db
+.gemini/
 
 ### 🔐 Secrets ###
 *.pem
@@ -19,3 +20,4 @@ Thumbs.db
 
 ### 📦 Build Artifacts ###
 gradle-8.7/
+out/
