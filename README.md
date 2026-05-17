@@ -156,6 +156,57 @@ docker-compose up -d --build
 docker-compose logs -f
 ```
 
+---
+
+## ⚡ 분산 웹소켓 실시간 테스터 대시보드 (WebSocket Live Tester)
+
+본 프로젝트는 분산 환경의 웹소켓 동작 및 WebRTC 시그널링을 손쉽게 검증할 수 있도록 스프링 시큐리티 우회 필터를 적용한 **Glassmorphism 스타일의 프리미엄 실시간 테스터 대시보드**를 내장하고 있습니다.
+
+### 🌐 접속 주소
+- **Application Node 1**: [http://localhost:8081/ws-tester.html](http://localhost:8081/ws-tester.html)
+- **Application Node 2**: [http://localhost:8082/ws-tester.html](http://localhost:8082/ws-tester.html)
+
+### ✨ 주요 핵심 기능
+- **원클릭 가짜 JWT 생성기:** STOMP Handshake 시 필수 항목인 JWT 인증 필터를 위해, 사용자 ID만 입력하면 즉시 1시간짜리 테스트용 JWT 토큰을 자동 발행 및 주입합니다.
+- **다이나믹 드롭다운 템플릿:** 일반 대화(`TALK`), 채팅방 입장(`ENTER`), WebRTC 룸 조인(`JOIN`), WebRTC SDP 정보(`OFFER`/`ANSWER`), ICE 후보(`ICE`) 등 다양한 시나리오 페이로드 구조를 마우스 원클릭으로 주입하고 즉시 포맷팅해 줍니다.
+- **실시간 Fira Code 터미널:** 유입되는 모든 인바운드(`INBOUND`), 아웃바운드(`OUTBOUND`) 프레임을 미려하게 가공하고 실시간 시간과 태그별 컬러 하이라이팅을 입혀 가시성을 대폭 향상했습니다.
+
+### 🧪 포트폴리오용 다중 노드(Node-1 ↔ Node-2) 동기화 검증 시나리오
+> Redis Pub/Sub을 거쳐 다중 노드 간 실시간 메시지가 완벽하게 동화되는 분산 스케일아웃 기술의 핵심 증적 자료입니다.
+
+1. **브라우저에 두 개의 탭(또는 창)을 나란히 배치**합니다.
+   - **탭 A**: [http://localhost:8081/ws-tester.html](http://localhost:8081/ws-tester.html) (Node 1)
+   - **탭 B**: [http://localhost:8082/ws-tester.html](http://localhost:8082/ws-tester.html) (Node 2)
+2. **탭 A (Node 1)**:
+   - 임시 사용자 식별자에 `user-A` 입력 후 `JWT 토큰 생성` 클릭
+   - 초록색 `Connect` 버튼 클릭 (연결 상태가 `Connected`로 변경됨)
+   - 핑크색 `구독 실행` 버튼 클릭 (토픽 경로 `/topic/chat/room/room-777` 구독 개시)
+3. **탭 B (Node 2)**:
+   - 임시 사용자 식별자에 `user-B` 입력 후 `JWT 토큰 생성` 클릭
+   - 초록색 `Connect` 버튼 클릭 및 `/topic/chat/room/room-777` 경로 동일하게 `구독 실행`
+4. **메시지 전송 및 동기화 확인**:
+    - **탭 A**에서 `STOMP 메시지 발행하기 (Send Frame)`를 클릭합니다.
+    - **탭 B (Node 2)**의 터미널 콘솔 로그 창을 확인하면, 서로 다른 포트/애플리케이션 노드에 붙어있음에도 불구하고 **Redis Pub/Sub을 타고 탭 A가 발행한 메시지가 탭 B로 실시간 수신(INBOUND)되는 놀라운 현상**을 눈으로 직접 검증할 수 있습니다!
+
+### 📡 Redis Pub/Sub 실시간 메시지 흐름 관측 기법 (중요!)
+> ⚠️ **아키텍처적 주의 사항**: Redis Pub/Sub은 **"발행 및 망각(Fire and Forget)"** 방식의 초경량 실시간 푸시 엔진입니다. 메시지가 메모리나 디스크에 Key-Value 형태로 저장되지 않고, 채널을 리스닝 중인 구독자에게 밀어준 뒤 **즉시 소멸**합니다. 레디스 내부를 관통하는 실시간 메시지 흐름을 확인하고 싶을 때, 다음 두 가지 모니터링 수단을 즉시 활용할 수 있습니다.
+
+
+#### 1. CLI 터미널 실시간 스트리밍 관측 (강력 추천 ⭐)
+새로운 명령 프롬프트나 터미널을 열고 아래 명령어를 입력하여 Redis 내부의 모든 메시지 발행(Publish) 이벤트를 실시간으로 가로채어 모니터링합니다.
+```bash
+# Redis CLI의 패턴 구독(psubscribe) 명령을 이용해 흐르는 모든 메시지 덤프
+docker exec -it rtc-redis redis-cli -a rtc-secret psubscribe "*"
+```
+*메시지가 전송될 때마다 터미널에 메시지 본문과 채널명이 실시간으로 스트리밍 출력됩니다.*
+
+#### 2. Redis Commander Web GUI 모니터링 (Port: 8085)
+도커 환경에 경량화된 Redis Web UI 도구인 **`Redis Commander`**를 함께 구성해 두었습니다.
+- **접속 주소:** [http://localhost:8085](http://localhost:8085)
+- **활용법:** 왼쪽 트리에서 `local` Redis 인스턴스 정보와 시스템 지표를 확인하거나, 우측 상단의 `CLI` 탭을 열고 `psubscribe *` 또는 `monitor` 명령어를 입력하여 브라우저에서 편리하게 Redis 실시간 흐름을 조회할 수 있습니다.
+
+
+
 ## 🧪 Tests — 어떻게 검증했는가
 
 ```bash

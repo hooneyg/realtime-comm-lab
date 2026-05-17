@@ -44,6 +44,11 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     // Embedded Redis for Integration Tests
     testImplementation 'com.github.codemonstur:embedded-redis:1.4.3'
+
+    // ═══════════════════════════════════════════════════════
+    // 📖 Documentation: API 문서화를 위한 Swagger/OpenAPI
+    // ═══════════════════════════════════════════════════════
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
 }
 
 tasks.named('test') {

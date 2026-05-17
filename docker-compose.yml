@@ -45,3 +45,16 @@ services:
     depends_on:
       redis-broker:
         condition: service_healthy
+
+  # 4. Redis Web GUI (Redis Commander)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: rtc-redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis-broker:6379:0:rtc-secret
+    ports:
+      - "8085:8081"
+    depends_on:
+      redis-broker:
+        condition: service_healthy
+
