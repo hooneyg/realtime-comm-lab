@@ -46,6 +46,21 @@ public class JwtTokenProvider {
     }
 
     /**
+     * 테스트 및 모킹 검증을 위한 JWT 토큰 생성 (1시간 유효)
+     */
+    public String createToken(String username) {
+        java.util.Date now = new java.util.Date();
+        java.util.Date expiry = new java.util.Date(now.getTime() + 3600000); // 1시간 유효
+
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(now)
+                .expiration(expiry)
+                .signWith(key)
+                .compact();
+    }
+
+    /**
      * 검증된 토큰에서 Authentication 객체를 추출합니다.
      * STOMP 세션의 User Principal로 등록되어 라우팅 보안에 활용됩니다.
      */
