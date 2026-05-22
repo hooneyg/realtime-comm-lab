@@ -14,7 +14,6 @@
 
 <p align="center">
   <b>🔗 Homepage / Demo:</b> <a href="https://hooneyg.github.io">hooneyg.github.io</a><br>
-  <b>🧪 Live Tester:</b> <a href="http://localhost:8081/ws-tester.html">Node 1 (ws-tester.html)</a> | <a href="http://localhost:8082/ws-tester.html">Node 2 (ws-tester.html)</a>
 </p>
 
 <p align="center">
