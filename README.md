@@ -11,7 +11,13 @@
   <img src="https://img.shields.io/badge/WebRTC-P2P_Signaling-333333?style=for-the-badge&logo=webrtc&logoColor=white" />
 </p>
 
-<p>
+
+<p align="center">
+  <b>🔗 Homepage / Demo:</b> <a href="https://hooneyg.github.io">hooneyg.github.io</a><br>
+  <b>🧪 Live Tester:</b> <a href="http://localhost:8081/ws-tester.html">Node 1 (ws-tester.html)</a> | <a href="http://localhost:8082/ws-tester.html">Node 2 (ws-tester.html)</a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" />
   <img src="https://img.shields.io/badge/Coverage-93%25-brightgreen?style=flat-square" />
   <img src="https://img.shields.io/badge/Build-Passing-brightgreen?style=flat-square&logo=githubactions&logoColor=white" />
