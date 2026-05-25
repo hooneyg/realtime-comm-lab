@@ -1,3 +1,11 @@
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║         🐳 Dockerfile (Multi-stage Build for Java 21)           ║
+# ║                                                                  ║
+# ║  [빌드 전략]                                                     ║
+# ║  빌드 환경과 실행 환경을 분리하여 공격 표면을 줄이고 이미지 크기 최적화 ║
+# ╚══════════════════════════════════════════════════════════════════╝
+
+# --- Step 1: Build Stage (컴파일 단계) ---
 FROM gradle:jdk21-alpine AS builder
 
 WORKDIR /app
@@ -5,6 +13,9 @@ COPY build.gradle settings.gradle ./
 COPY gradle gradle
 COPY gradlew ./
 COPY src src
+
+# [추가] alpine 환경에 dos2unix 설치 후 gradlew 파일의 줄바꿈을 LF로 강제 변환
+RUN apk add --no-cache dos2unix && dos2unix gradlew
 
 # Gradle Wrapper에 실행 권한 부여 및 빌드 (테스트 스킵)
 RUN chmod +x gradlew && ./gradlew clean build -x test
